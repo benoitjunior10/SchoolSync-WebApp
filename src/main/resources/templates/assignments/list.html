@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Affectations')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: shell('Affectations', ~{::section})}">
+    <section>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">Affectations d'enseignement</div>
+                    <div class="card-subtitle">
+                        <span data-search-count="assignments-table"
+                              th:attr="data-total=${#lists.size(assignments) + ' affectation' + (#lists.size(assignments) > 1 ? 's' : '')}"
+                              th:text="${#lists.size(assignments) + ' affectation' + (#lists.size(assignments) > 1 ? 's' : '')}"></span>
+                    </div>
+                </div>
+                <a class="btn btn-primary" th:href="@{/assignments/new}" sec:authorize="hasRole('ADMIN')">
+                    <span class="material-symbols-outlined mi-sm">add</span> Nouvelle affectation
+                </a>
+            </div>
+            <div class="search-bar">
+                <div class="search-wrap">
+                    <span class="material-symbols-outlined" style="font-size:18px;">search</span>
+                    <input class="search-input" type="text" data-search="assignments-table" placeholder="Rechercher par classe, matière, professeur…" />
+                </div>
+                <div class="per-page-wrap">Par page :
+                    <select data-per-page="assignments-table">
+                        <option value="10" selected>10</option><option value="25">25</option><option value="50">50</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-body" style="padding:0">
+                <div class="table-wrap" style="border:none;border-radius:0;box-shadow:none">
+                    <table class="table table-mobile" id="assignments-table" data-paginate="10">
+                        <thead><tr><th>Classe</th><th>Matière</th><th>Professeur</th><th>Année</th><th>Semestre</th><th></th></tr></thead>
+                        <tbody>
+                        <tr th:each="a : ${assignments}">
+                            <td data-label="Classe"><span class="badge" th:text="${a.classGroup.name}"></span></td>
+                            <td data-label="Matière" style="font-weight:500" th:text="${a.subject.code + ' — ' + a.subject.name}"></td>
+                            <td data-label="Professeur" th:text="${a.teacher.firstName + ' ' + a.teacher.lastName}"></td>
+                            <td data-label="Année" class="mono small" th:text="${a.academicYear}"></td>
+                            <td data-label="Semestre"><span class="badge" th:text="${a.semester}"></span></td>
+                            <td>
+                                <div class="actions">
+                                    <a class="btn btn-icon" data-tooltip="Modifier" th:href="@{/assignments/{id}/edit(id=${a.id})}" sec:authorize="hasAnyRole('ADMIN','TEACHER')"><span class="material-symbols-outlined">edit</span></a>
+                                    <form th:action="@{/assignments/{id}/delete(id=${a.id})}" method="post" style="margin:0" sec:authorize="hasRole('ADMIN')">
+                                        <button class="btn btn-icon btn-danger" type="submit" data-confirm="Supprimer cette affectation ?" data-tooltip="Supprimer"><span class="material-symbols-outlined">delete</span></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-empty>
+                            <td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">
+                                <span class="material-symbols-outlined" style="font-size:32px;opacity:.25;display:block;margin-bottom:8px">search</span>
+                                Aucun résultat.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="pagination" data-pagination="assignments-table">
+                <div class="pagination-info"></div><div class="pagination-controls"></div>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

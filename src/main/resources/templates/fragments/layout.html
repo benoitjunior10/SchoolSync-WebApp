@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${title} + ' — SchoolSync'">SchoolSync</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0" />
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+    <script defer th:src="@{/js/app.js}"></script>
+</head>
+<body>
+
+<!-- Overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div th:fragment="shell(pageTitle, content)" class="container">
+
+    <!-- ═══ Sidebar ═══ -->
+    <aside class="sidebar" id="sidebar">
+
+        <!-- Sidebar header -->
+        <div class="brand">
+            <div class="brand-badge">
+                <span class="material-symbols-outlined" style="font-size:20px;color:#fff">school</span>
+            </div>
+            <div>
+                <div class="brand-name">SchoolSync</div>
+                <div class="brand-sub">Portail scolaire</div>
+            </div>
+            <!-- Close button (mobile only) -->
+            <button class="sidebar-close" id="sidebarClose" aria-label="Fermer le menu">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <nav class="nav">
+
+            <div class="hint">Navigation</div>
+            <a th:href="@{/}" th:classappend="${currentPath == '/'} ? ' active' : ''" onclick="closeSidebar()">
+                <span class="icon"><span class="material-symbols-outlined">home</span></span>
+                Dashboard
+            </a>
+
+            <div sec:authorize="hasRole('ADMIN')">
+                <div class="hint">Administration</div>
+                <a th:href="@{/students}" th:classappend="${currentPath != null and currentPath.startsWith('/students')} ? ' active' : ''" onclick="closeSidebar()">
+                    <span class="icon"><span class="material-symbols-outlined">school</span></span>
+                    Étudiants
+                </a>
+                <a th:href="@{/teachers}" th:classappend="${currentPath != null and currentPath.startsWith('/teachers')} ? ' active' : ''" onclick="closeSidebar()">
+                    <span class="icon"><span class="material-symbols-outlined">person_book</span></span>
+                    Professeurs
+                </a>
+                <a th:href="@{/subjects}" th:classappend="${currentPath != null and currentPath.startsWith('/subjects')} ? ' active' : ''" onclick="closeSidebar()">
+                    <span class="icon"><span class="material-symbols-outlined">menu_book</span></span>
+                    Matières
+                </a>
+                <a th:href="@{/class-groups}" th:classappend="${currentPath != null and currentPath.startsWith('/class-groups')} ? ' active' : ''" onclick="closeSidebar()">
+                    <span class="icon"><span class="material-symbols-outlined">grid_view</span></span>
+                    Classes
+                </a>
+            </div>
+
+            <div sec:authorize="hasAnyRole('ADMIN','TEACHER')">
+                <div class="hint">Pédagogie</div>
+                <a th:href="@{/assignments}" th:classappend="${currentPath != null and currentPath.startsWith('/assignments')} ? ' active' : ''" onclick="closeSidebar()">
+                    <span class="icon"><span class="material-symbols-outlined">assignment</span></span>
+                    Affectations
+                </a>
+                <a th:href="@{/evaluations}" th:classappend="${currentPath != null and currentPath.startsWith('/evaluations')} ? ' active' : ''" onclick="closeSidebar()">
+                    <span class="icon"><span class="material-symbols-outlined">fact_check</span></span>
+                    Évaluations
+                </a>
+                <a th:href="@{/grades}" th:classappend="${currentPath != null and currentPath.startsWith('/grades')} ? ' active' : ''" onclick="closeSidebar()">
+                    <span class="icon"><span class="material-symbols-outlined">bar_chart</span></span>
+                    Notes
+                </a>
+            </div>
+
+            <div sec:authorize="hasRole('STUDENT')">
+                <div class="hint">Étudiant</div>
+                <a th:href="@{/report/me}" th:classappend="${currentPath != null and currentPath.startsWith('/report')} ? ' active' : ''" onclick="closeSidebar()">
+                    <span class="icon"><span class="material-symbols-outlined">description</span></span>
+                    Mon bulletin
+                </a>
+            </div>
+
+        </nav>
+
+        <div class="nav-bottom">
+            <form th:action="@{/logout}" method="post" style="margin:0">
+                <button class="btn" type="submit" style="width:100%;justify-content:center;gap:8px;background:transparent;border-color:rgba(255,255,255,.10);color:#8a9ab8;font-size:13px;">
+                    <span class="material-symbols-outlined" style="font-size:17px;">logout</span>
+                    Déconnexion
+                </button>
+            </form>
+        </div>
+
+    </aside>
+
+    <!-- ═══ Main ═══ -->
+    <main class="main">
+
+        <div class="topbar">
+            <!-- Hamburger (mobile only) -->
+            <button class="hamburger" id="hamburger" aria-label="Ouvrir le menu">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+
+            <div style="flex:1;min-width:0">
+                <div class="title" th:text="${pageTitle}">Page</div>
+                <div class="small" sec:authorize="isAuthenticated()" style="margin-top:1px">
+                    Connecté en tant que
+                    <strong sec:authentication="name" style="color:var(--text-2)">utilisateur</strong>
+                </div>
+            </div>
+            <div class="actions topbar-badges" sec:authorize="isAuthenticated()">
+                <span class="badge badge-admin"   sec:authorize="hasRole('ADMIN')">Admin</span>
+                <span class="badge badge-teacher" sec:authorize="hasRole('TEACHER')">Professeur</span>
+                <span class="badge badge-student" sec:authorize="hasRole('STUDENT')">Étudiant</span>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <div th:replace="${content}"></div>
+        </div>
+
+        <div class="footer">
+            © <span th:text="${#dates.format(#dates.createNow(),'yyyy')}">2026</span> SchoolSync
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

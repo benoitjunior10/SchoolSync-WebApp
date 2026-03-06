@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: shell('Dashboard', ~{::section})}">
+    <section>
+
+        <!-- Welcome banner -->
+        <div style="background:linear-gradient(135deg,#1a2035 0%,#2a3555 100%);border-radius:16px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;overflow:hidden;position:relative;">
+            <div style="position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:rgba(99,102,241,.12);pointer-events:none;"></div>
+            <div style="position:absolute;bottom:-40px;right:120px;width:140px;height:140px;border-radius:50%;background:rgba(99,102,241,.07);pointer-events:none;"></div>
+            <div style="position:relative;z-index:1">
+                <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:#e8ecf5;letter-spacing:-.02em;display:flex;align-items:center;gap:10px">
+                    <span class="material-symbols-outlined" style="font-size:26px;color:#818cf8">waving_hand</span>
+                    Bienvenue sur SchoolSync
+                </div>
+                <div style="font-size:13.5px;color:#8a9ab8;margin-top:6px;line-height:1.5">
+                    Accédez rapidement à vos modules selon votre rôle.
+                </div>
+            </div>
+            <div style="position:relative;z-index:1;display:flex;align-items:center;gap:10px" sec:authorize="isAuthenticated()">
+                <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#a78bfa);display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:#fff;box-shadow:0 4px 14px rgba(99,102,241,.45);">
+                    <span sec:authentication="name" style="text-transform:uppercase"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Module cards -->
+        <div class="module-grid" style="margin-top:20px">
+
+            <!-- Administration -->
+            <div class="module-card">
+                <div class="module-icon indigo">
+                    <span class="material-symbols-outlined" style="font-size:22px;color:#6366f1">manage_accounts</span>
+                </div>
+                <div>
+                    <div class="module-title">Administration</div>
+                    <div class="module-desc">Gérer les étudiants, professeurs, matières et classes.</div>
+                </div>
+                <div class="actions" sec:authorize="hasRole('ADMIN')">
+                    <a class="btn btn-primary" th:href="@{/students}">Étudiants</a>
+                    <a class="btn" th:href="@{/teachers}">Professeurs</a>
+                </div>
+                <div sec:authorize="!hasRole('ADMIN')" class="small" style="color:var(--muted-2)">Réservé aux administrateurs.</div>
+            </div>
+
+            <!-- Pédagogie -->
+            <div class="module-card">
+                <div class="module-icon amber">
+                    <span class="material-symbols-outlined" style="font-size:22px;color:#f59e0b">fact_check</span>
+                </div>
+                <div>
+                    <div class="module-title">Pédagogie</div>
+                    <div class="module-desc">Créer des évaluations et saisir les notes des étudiants.</div>
+                </div>
+                <div class="actions" sec:authorize="hasAnyRole('ADMIN','TEACHER')">
+                    <a class="btn btn-primary" th:href="@{/evaluations}">Évaluations</a>
+                    <a class="btn" th:href="@{/grades}">Notes</a>
+                </div>
+                <div sec:authorize="!hasAnyRole('ADMIN','TEACHER')" class="small" style="color:var(--muted-2)">Réservé aux professeurs et administrateurs.</div>
+            </div>
+
+            <!-- Bulletin -->
+            <div class="module-card">
+                <div class="module-icon emerald">
+                    <span class="material-symbols-outlined" style="font-size:22px;color:#10b981">description</span>
+                </div>
+                <div>
+                    <div class="module-title">Bulletin</div>
+                    <div class="module-desc">Consulter vos résultats et votre moyenne générale.</div>
+                </div>
+                <div class="actions" sec:authorize="hasRole('STUDENT')">
+                    <a class="btn btn-primary" th:href="@{/report/me}">Mon bulletin</a>
+                </div>
+                <div sec:authorize="hasRole('ADMIN')">
+                    <a class="btn" th:href="@{/students}">Bulletins étudiants</a>
+                </div>
+                <div sec:authorize="hasRole('TEACHER')" class="small" style="color:var(--muted-2)">Accessible aux étudiants.</div>
+            </div>
+
+        </div>
+
+        <!-- Quick links for admin -->
+        <div sec:authorize="hasRole('ADMIN')" class="card">
+            <div class="card-header">
+                <div>
+                    <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:14px">Accès rapide</div>
+                    <div class="small" style="margin-top:2px">Raccourcis vers les sections de gestion</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="actions">
+                    <a class="btn" th:href="@{/subjects}">
+                        <span class="material-symbols-outlined mi-sm">menu_book</span> Matières
+                    </a>
+                    <a class="btn" th:href="@{/class-groups}">
+                        <span class="material-symbols-outlined mi-sm">grid_view</span> Classes
+                    </a>
+                    <a class="btn" th:href="@{/assignments}">
+                        <span class="material-symbols-outlined mi-sm">assignment</span> Affectations
+                    </a>
+                    <a class="btn" th:href="@{/evaluations}">
+                        <span class="material-symbols-outlined mi-sm">fact_check</span> Évaluations
+                    </a>
+                    <a class="btn" th:href="@{/grades}">
+                        <span class="material-symbols-outlined mi-sm">bar_chart</span> Notes
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info for anonymous -->
+        <div class="card" sec:authorize="isAnonymous()">
+            <div class="card-body">
+                <div class="alert">
+                    Vous n'êtes pas connecté.
+                    <a th:href="@{/login}" class="btn btn-primary" style="margin-left:12px">Se connecter</a>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

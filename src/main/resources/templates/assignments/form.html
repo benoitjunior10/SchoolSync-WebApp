@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}"></head>
+<body>
+<div th:replace="~{fragments/layout :: shell(${pageTitle}, ~{::section})}">
+    <section>
+        <div class="card">
+            <div class="card-header">
+                <div style="font-weight:800" th:text="${formTitle} ?: 'Affectation'"></div>
+                <a class="btn" data-tooltip="Retour" th:href="@{/assignments}"><span class="material-symbols-outlined mi-sm">arrow_back</span> Retour</a>
+            </div>
+            <div class="card-body">
+
+                <form class="form" th:action="@{${actionUrl}}" method="post" th:object="${assignment}">
+                    <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                        <div th:each="e : ${#fields.errors('*')}" th:text="${e}"></div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="field">
+                            <label>Professeur</label>
+                            <select name="teacherId" required sec:authorize="hasRole('ADMIN')">
+                                <option value="" disabled selected>Sélectionner</option>
+                                <option th:each="t : ${teachers}"
+                                        th:value="${t.id}"
+                                        th:text="${t.matricule + ' - ' + t.firstName + ' ' + t.lastName}"
+                                        th:selected="${assignment.teacher != null and assignment.teacher.id != null and t.id == assignment.teacher.id}"></option>
+                            </select>
+
+                            <!-- Professeur: en mode TEACHER, on affiche en lecture seule -->
+                            <div sec:authorize="hasRole('TEACHER')" class="input" style="display:flex; align-items:center">
+                                <span th:text="${assignment.teacher != null ? (assignment.teacher.matricule + ' - ' + assignment.teacher.firstName + ' ' + assignment.teacher.lastName) : '—'}">—</span>
+                                <input type="hidden" name="teacherId" th:value="${assignment.teacher != null ? assignment.teacher.id : ''}" />
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label>Matière</label>
+                            <select name="subjectId" required>
+                                <option value="" disabled selected>Sélectionner</option>
+                                <option th:each="s : ${subjects}"
+                                        th:value="${s.id}"
+                                        th:text="${s.code + ' - ' + s.name}"
+                                        th:selected="${assignment.subject != null and assignment.subject.id != null and s.id == assignment.subject.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="field">
+                            <label>Classe</label>
+                            <select name="classGroupId" required>
+                                <option value="" disabled selected>Sélectionner</option>
+                                <option th:each="cg : ${classGroups}"
+                                        th:value="${cg.id}"
+                                        th:text="${cg.name + ' - ' + cg.academicYear}"
+                                        th:selected="${assignment.classGroup != null and assignment.classGroup.id != null and cg.id == assignment.classGroup.id}"></option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Semestre</label>
+                            <select name="semester" required>
+                                <option th:each="sem : ${semesters}"
+                                        th:value="${sem}"
+                                        th:text="${sem}"
+                                        th:selected="${assignment.semester != null and sem == assignment.semester}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Année académique</label>
+                        <input class="input" type="text" th:field="*{academicYear}" placeholder="ex: 2025-2026" />
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn btn-primary" type="submit" th:text="${actionUrl == '/assignments' ? 'Créer' : 'Enregistrer'}">Enregistrer</button>
+                        <a class="btn" th:href="@{/assignments}">Annuler</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

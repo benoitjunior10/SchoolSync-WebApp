@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Évaluations')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: shell('Évaluations', ~{::section})}">
+    <section>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div class="card" style="margin-bottom:0">
+            <div class="card-body" style="padding:14px 16px">
+                <form method="get" class="filter-form" style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+                    <div class="field" style="flex:1;min-width:200px;margin:0">
+                        <label>Filtrer par affectation</label>
+                        <select name="assignmentId">
+                            <option value="" th:selected="${selectedAssignmentId == null}">Toutes les affectations</option>
+                            <option th:each="a : ${assignments}" th:value="${a.id}"
+                                    th:selected="${selectedAssignmentId == a.id}"
+                                    th:text="${a.classGroup.name + ' · ' + a.subject.code + ' · ' + a.semester + ' · ' + a.academicYear}"></option>
+                        </select>
+                    </div>
+                    <button class="btn" type="submit"><span class="material-symbols-outlined mi-sm">filter_list</span> Filtrer</button>
+                    <a class="btn btn-primary" th:href="@{/evaluations/new}">
+                        <span class="material-symbols-outlined mi-sm">add</span> Nouvelle évaluation
+                    </a>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">Évaluations</div>
+                    <div class="card-subtitle">
+                        <span data-search-count="evaluations-table"
+                              th:attr="data-total=${#lists.size(evaluations) + ' évaluation' + (#lists.size(evaluations) > 1 ? 's' : '')}"
+                              th:text="${#lists.size(evaluations) + ' évaluation' + (#lists.size(evaluations) > 1 ? 's' : '')}"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="search-bar">
+                <div class="search-wrap">
+                    <span class="material-symbols-outlined" style="font-size:18px;">search</span>
+                    <input class="search-input" type="text" data-search="evaluations-table" placeholder="Rechercher par titre, classe, matière…" />
+                </div>
+                <div class="per-page-wrap">Par page :
+                    <select data-per-page="evaluations-table">
+                        <option value="10" selected>10</option><option value="25">25</option><option value="50">50</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-body" style="padding:0">
+                <div class="table-wrap" style="border:none;border-radius:0;box-shadow:none">
+                    <table class="table table-mobile" id="evaluations-table" data-paginate="10">
+                        <thead><tr><th>Titre</th><th>Date</th><th>Poids</th><th>Note max</th><th>Affectation</th><th></th></tr></thead>
+                        <tbody>
+                        <tr th:each="e : ${evaluations}">
+                            <td data-label="Titre" style="font-weight:500" th:text="${e.title}"></td>
+                            <td data-label="Date" class="muted mono" style="font-size:12px" th:text="${e.date}"></td>
+                            <td data-label="Poids"><span class="badge" th:text="${e.weight + '%'}"></span></td>
+                            <td data-label="Max" class="mono" th:text="${e.maxScore}"></td>
+                            <td data-label="Affectation" class="small" th:text="${e.assignment.classGroup.name + ' · ' + e.assignment.subject.code + ' · ' + e.semester + ' · ' + e.academicYear}"></td>
+                            <td>
+                                <div class="actions">
+                                    <a class="btn btn-icon" data-tooltip="Modifier" th:href="@{/evaluations/{id}/edit(id=${e.id})}"><span class="material-symbols-outlined">edit</span></a>
+                                    <form th:action="@{/evaluations/{id}/delete(id=${e.id})}" method="post" style="margin:0">
+                                        <button class="btn btn-icon btn-danger" type="submit" data-confirm="Supprimer cette évaluation ?" data-tooltip="Supprimer"><span class="material-symbols-outlined">delete</span></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-empty>
+                            <td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">
+                                <span class="material-symbols-outlined" style="font-size:32px;opacity:.25;display:block;margin-bottom:8px">search</span>
+                                Aucun résultat.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="pagination" data-pagination="evaluations-table">
+                <div class="pagination-info"></div><div class="pagination-controls"></div>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

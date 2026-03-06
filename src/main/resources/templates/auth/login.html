@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Connexion')}"></head>
+<body>
+<div class="auth-wrap">
+    <div class="auth-card">
+
+        <!-- Left panel -->
+        <div class="auth-left">
+            <div class="auth-brand">
+                <div class="brand-badge"><span class="material-symbols-outlined" style="font-size:20px;color:#fff">school</span></div>
+                <div>
+                    <div class="auth-brand-name">SchoolSync</div>
+                    <div class="auth-brand-sub">Portail de gestion</div>
+                </div>
+            </div>
+
+            <div>
+                <div class="auth-headline">Gérez votre établissement avec efficacité</div>
+                <p class="auth-desc" style="margin-top:10px">
+                    Une plateforme unifiée pour les administrateurs, professeurs et étudiants.
+                </p>
+            </div>
+
+            <div class="auth-features">
+                <div class="auth-feature">
+                    <div class="auth-feature-dot">
+                        <span class="material-symbols-outlined" style="font-size:15px;color:#818cf8">settings</span>
+                    </div>
+                    <div><strong style="color:#c4d0e8">Admin</strong> — Configuration &amp; gestion complète</div>
+                </div>
+                <div class="auth-feature">
+                    <div class="auth-feature-dot">
+                        <span class="material-symbols-outlined" style="font-size:15px;color:#818cf8">assignment</span>
+                    </div>
+                    <div><strong style="color:#c4d0e8">Professeur</strong> — Évaluations &amp; saisie des notes</div>
+                </div>
+                <div class="auth-feature">
+                    <div class="auth-feature-dot">
+                        <span class="material-symbols-outlined" style="font-size:15px;color:#818cf8">description</span>
+                    </div>
+                    <div><strong style="color:#c4d0e8">Étudiant</strong> — Consultation du bulletin</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right panel -->
+        <div class="auth-right">
+
+            <!-- Logo visible uniquement sur mobile -->
+            <div class="auth-mobile-logo">
+                <div class="brand-badge" style="width:48px;height:48px;border-radius:14px;">
+                    <span class="material-symbols-outlined" style="font-size:24px;color:#fff">school</span>
+                </div>
+                <div>
+                    <div style="font-family:'Sora',sans-serif;font-size:17px;font-weight:800;color:var(--text);letter-spacing:-.02em">SchoolSync</div>
+                    <div style="font-size:12px;color:var(--muted)">Portail de gestion</div>
+                </div>
+            </div>
+
+            <div>
+                <div class="auth-title">Connexion</div>
+                <div class="auth-sub">Entrez vos identifiants pour accéder à votre espace.</div>
+            </div>
+
+            <div th:if="${success}"      class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${param.logout}" class="alert alert-success">Déconnexion réussie.</div>
+            <div th:if="${param.error}"  class="alert alert-danger">Identifiants incorrects. Veuillez réessayer.</div>
+
+            <form class="form" th:action="@{/login}" method="post">
+                <div class="field">
+                    <label for="username">Identifiant</label>
+                    <input id="username" type="text" name="username" placeholder="Matricule ou nom d'utilisateur" required autocomplete="username" />
+                </div>
+                <div class="field">
+                    <label for="password">Mot de passe</label>
+                    <input id="password" type="password" name="password" placeholder="••••••••" required autocomplete="current-password" />
+                </div>
+                <button class="btn btn-primary" type="submit" style="width:100%;justify-content:center;padding:12px">
+                    <span class="material-symbols-outlined mi-sm">login</span>
+                    Se connecter
+                </button>
+            </form>
+
+            <div style="display:flex;align-items:center;gap:12px;font-size:12px;color:var(--muted)">
+                <div style="flex:1;height:1px;background:var(--border)"></div>
+                Pas encore de compte ?
+                <div style="flex:1;height:1px;background:var(--border)"></div>
+            </div>
+
+            <div class="actions" style="justify-content:center">
+                <a class="btn" th:href="@{/signup/student}" style="flex:1;justify-content:center">
+                    <span class="material-symbols-outlined mi-sm">school</span>
+                    Inscription étudiant
+                </a>
+                <a class="btn" th:href="@{/signup/teacher}" style="flex:1;justify-content:center">
+                    <span class="material-symbols-outlined mi-sm">person_book</span>
+                    Inscription professeur
+                </a>
+            </div>
+
+            <p class="small" style="text-align:center;color:var(--muted-2)">
+                Un profil doit déjà exister dans la base de données avant l'inscription.
+            </p>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

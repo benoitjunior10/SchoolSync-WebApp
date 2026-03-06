@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Notes')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: shell('Saisie des notes', ~{::section})}">
+    <section>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">Choisir une évaluation</div>
+                    <div class="card-subtitle">Sélectionnez une évaluation pour saisir les scores.</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div th:if="${#lists.isEmpty(evaluations)}" class="alert">
+                    <div>Aucune évaluation disponible. Vérifiez les affectations et les évaluations.</div>
+                </div>
+                <form class="form" method="get" th:if="${!#lists.isEmpty(evaluations)}">
+                    <div class="field">
+                        <label>Évaluation</label>
+                        <select name="evaluationId" required>
+                            <option value="" disabled selected>Sélectionner une évaluation…</option>
+                            <option th:each="e : ${evaluations}" th:value="${e.id}"
+                                    th:text="${e.title + ' — ' + e.assignment.classGroup.name + ' · ' + e.assignment.subject.code + ' · ' + e.semester + ' · ' + e.academicYear}"></option>
+                        </select>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" type="submit">Continuer <span class="material-symbols-outlined mi-sm">arrow_forward</span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

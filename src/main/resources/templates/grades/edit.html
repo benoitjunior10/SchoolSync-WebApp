@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Saisie des notes')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: shell('Saisie des notes', ~{::section})}">
+    <section>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title" th:text="${evaluation.title}">Évaluation</div>
+                    <div class="card-subtitle"
+                         th:text="${evaluation.assignment.classGroup.name + ' · ' + evaluation.assignment.subject.code + ' · ' + evaluation.semester + ' · ' + evaluation.academicYear + ' · Max = ' + evaluation.maxScore}"></div>
+                </div>
+                <a class="btn" th:href="@{/grades}">
+                    <span class="material-symbols-outlined mi-sm">arrow_back</span> Changer
+                </a>
+            </div>
+            <div class="card-body" style="padding:0">
+                <form th:action="@{/grades/save}" method="post">
+                    <input type="hidden" name="evaluationId" th:value="${evaluation.id}" />
+                    <div class="table-wrap" style="border:none;border-radius:0;box-shadow:none">
+                        <table class="table table-mobile">
+                            <thead>
+                            <tr>
+                                <th>Matricule</th>
+                                <th>Nom complet</th>
+                                <th>Score / <span class="mono" th:text="${evaluation.maxScore}"></span></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="s : ${students}">
+                                <td data-label="Matricule">
+                                    <span class="mono" style="font-size:12px;background:var(--surface-2);border:1px solid var(--border);padding:2px 8px;border-radius:6px" th:text="${s.matricule}"></span>
+                                </td>
+                                <td data-label="Nom" style="font-weight:500" th:text="${s.firstName + ' ' + s.lastName}"></td>
+                                <td data-label="Score">
+                                    <input type="hidden" name="studentId" th:value="${s.id}" />
+                                    <input type="number" step="0.1" min="0"
+                                           th:attr="data-max-score=${evaluation.maxScore}"
+                                           name="score"
+                                           th:value="${scoreByStudentId[s.id]}"
+                                           placeholder="—"
+                                           style="width:100%;max-width:140px;font-family:'DM Mono',monospace;font-size:14px;font-weight:500;text-align:center" />
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(students)}">
+                                <td colspan="3" style="text-align:center;padding:32px;color:var(--muted)">
+                                    <span class="material-symbols-outlined" style="font-size:32px;opacity:.25;display:block;margin-bottom:8px">group</span>
+                                    Aucun étudiant dans cette classe.
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="actions" style="padding:14px 16px;border-top:1px solid var(--border);flex-wrap:wrap;gap:8px">
+                        <button class="btn btn-primary" type="submit" style="flex:1;justify-content:center">
+                            <span class="material-symbols-outlined mi-sm">save</span> Enregistrer
+                        </button>
+                        <a class="btn btn-icon" data-tooltip="Rafraîchir" th:href="@{/grades(evaluationId=${evaluation.id})}">
+                            <span class="material-symbols-outlined">refresh</span>
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

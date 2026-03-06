@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Requête invalide')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: shell('Requête invalide', ~{::section})}">
+    <section>
+        <div class="card">
+            <div class="card-header">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <span class="material-symbols-outlined" style="font-size:22px;color:var(--warning)">warning</span>
+                    <div>
+                        <div class="card-title" style="color:var(--warning)">Erreur 400 — Requête invalide</div>
+                        <div class="card-subtitle">La requête n'a pas pu être traitée.</div>
+                    </div>
+                </div>
+                <a class="btn btn-primary" th:href="@{/}">
+                    <span class="material-symbols-outlined mi-sm">arrow_back</span>
+                    Accueil
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <div>
+                        <div style="font-weight:700;margin-bottom:6px">Détails</div>
+                        <div th:text="${message} ?: 'Requête invalide.'"></div>
+                        <div class="small" style="margin-top:8px;opacity:.7" th:text="${path}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

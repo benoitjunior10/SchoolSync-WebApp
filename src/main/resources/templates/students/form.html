@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Étudiant')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: shell('Étudiant', ~{::section})}">
+    <section>
+        <div class="card">
+            <div class="card-header">
+                <div style="font-weight:800" th:text="${student.id == null ? 'Nouvel étudiant' : 'Modifier étudiant'}"></div>
+                <a class="btn" data-tooltip="Retour" th:href="@{/students}"><span class="material-symbols-outlined mi-sm">arrow_back</span> Retour</a>
+            </div>
+            <div class="card-body">
+
+                <form class="form" th:action="${student.id == null} ? @{/students} : @{/students/{id}(id=${student.id})}" method="post" th:object="${student}">
+                    <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                        <div th:each="e : ${#fields.errors('*')}" th:text="${e}"></div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="field">
+                            <label>Matricule</label>
+                            <input class="input" type="text" th:field="*{matricule}" />
+                        </div>
+                        <div class="field">
+                            <label>Classe</label>
+                            <select name="classGroupId" required>
+                                <option value="" disabled th:selected="${(student.classGroup == null) && (selectedClassGroupId == null)}">Sélectionner</option>
+                                <option th:each="cg : ${classGroups}"
+                                        th:value="${cg.id}"
+                                        th:text="${cg.name + ' - ' + cg.academicYear}"
+                                        th:selected="${(selectedClassGroupId != null ? selectedClassGroupId : (student.classGroup != null ? student.classGroup.id : null)) == cg.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="field">
+                            <label>Prénom</label>
+                            <input class="input" type="text" th:field="*{firstName}" />
+                        </div>
+                        <div class="field">
+                            <label>Nom</label>
+                            <input class="input" type="text" th:field="*{lastName}" />
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="field">
+                            <label>Email</label>
+                            <input class="input" type="email" th:field="*{email}" />
+                        </div>
+                        <div class="field">
+                            <label>Téléphone</label>
+                            <input class="input" type="text" th:field="*{phone}" />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Date de naissance</label>
+                        <input type="date" th:field="*{birthDate}" />
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn btn-primary" type="submit">Enregistrer</button>
+                        <a class="btn" th:href="@{/students}">Annuler</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

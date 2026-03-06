@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Bulletin')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: shell('Bulletin étudiant', ~{::section})}">
+    <section>
+
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title" th:text="${report.fullName}"></div>
+                    <div class="card-subtitle" th:text="${report.matricule + ' · ' + report.classGroup + ' · ' + report.academicYear}"></div>
+                </div>
+                <a class="btn" th:href="@{/students}">
+                    <span class="material-symbols-outlined mi-sm">arrow_back</span> Retour
+                </a>
+            </div>
+            <div class="card-body">
+                <form method="get" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+                    <div class="field" style="flex:1;min-width:140px;margin:0">
+                        <label>Année académique</label>
+                        <input type="text" name="year" th:value="${year}" placeholder="ex: 2025-2026" />
+                    </div>
+                    <div class="field" style="flex:1;min-width:130px;margin:0">
+                        <label>Semestre</label>
+                        <select name="semester">
+                            <option value="" th:selected="${semester == null}">S1 + S2</option>
+                            <option value="S1" th:selected="${semester?.name() == 'S1'}">Semestre 1</option>
+                            <option value="S2" th:selected="${semester?.name() == 'S2'}">Semestre 2</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" type="submit" style="flex-shrink:0">
+                        <span class="material-symbols-outlined mi-sm">filter_list</span> Filtrer
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- S1 -->
+        <div th:if="${report.s1 != null}" style="margin-top:16px">
+            <div style="margin-bottom:10px">
+                <span style="background:var(--indigo-50);color:var(--indigo-600);border:1px solid var(--indigo-100);padding:4px 14px;border-radius:999px;font-family:'Sora',sans-serif;font-size:12px;font-weight:700">Semestre 1</span>
+            </div>
+            <div class="card" style="margin-top:0">
+                <div class="card-body" style="padding:0">
+                    <div class="table-wrap" style="border:none;border-radius:0;box-shadow:none">
+                        <table class="table table-mobile">
+                            <thead><tr><th>Code</th><th>Matière</th><th>Coeff.</th><th>Moyenne</th></tr></thead>
+                            <tbody>
+                            <tr th:each="sr : ${report.s1.subjects}">
+                                <td data-label="Code"><span class="badge badge-admin" th:text="${sr.subjectCode}"></span></td>
+                                <td data-label="Matière" style="font-weight:500" th:text="${sr.subjectName}"></td>
+                                <td data-label="Coeff." class="mono" th:text="${sr.coefficient}"></td>
+                                <td data-label="Moyenne">
+                                    <span th:if="${sr.average != null}" class="mono" style="font-weight:600;color:var(--indigo-600)" th:text="${#numbers.formatDecimal(sr.average,1,2)}"></span>
+                                    <span th:if="${sr.average == null}" class="muted">—</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+                    <span class="small" style="color:var(--muted)">Moyenne générale S1</span>
+                    <span style="background:var(--indigo-50);color:var(--indigo-600);border:1px solid var(--indigo-100);padding:5px 14px;border-radius:8px;font-family:'DM Mono',monospace;font-size:15px;font-weight:700"
+                          th:text="${report.s1.generalAverage == null ? '—' : #numbers.formatDecimal(report.s1.generalAverage,1,2)}"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- S2 -->
+        <div th:if="${report.s2 != null}" style="margin-top:16px">
+            <div style="margin-bottom:10px">
+                <span style="background:var(--amber-100);color:#b45309;border:1px solid #fde68a;padding:4px 14px;border-radius:999px;font-family:'Sora',sans-serif;font-size:12px;font-weight:700">Semestre 2</span>
+            </div>
+            <div class="card" style="margin-top:0">
+                <div class="card-body" style="padding:0">
+                    <div class="table-wrap" style="border:none;border-radius:0;box-shadow:none">
+                        <table class="table table-mobile">
+                            <thead><tr><th>Code</th><th>Matière</th><th>Coeff.</th><th>Moyenne</th></tr></thead>
+                            <tbody>
+                            <tr th:each="sr : ${report.s2.subjects}">
+                                <td data-label="Code"><span class="badge badge-admin" th:text="${sr.subjectCode}"></span></td>
+                                <td data-label="Matière" style="font-weight:500" th:text="${sr.subjectName}"></td>
+                                <td data-label="Coeff." class="mono" th:text="${sr.coefficient}"></td>
+                                <td data-label="Moyenne">
+                                    <span th:if="${sr.average != null}" class="mono" style="font-weight:600;color:#b45309" th:text="${#numbers.formatDecimal(sr.average,1,2)}"></span>
+                                    <span th:if="${sr.average == null}" class="muted">—</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+                    <span class="small" style="color:var(--muted)">Moyenne générale S2</span>
+                    <span style="background:var(--amber-100);color:#b45309;border:1px solid #fde68a;padding:5px 14px;border-radius:8px;font-family:'DM Mono',monospace;font-size:15px;font-weight:700"
+                          th:text="${report.s2.generalAverage == null ? '—' : #numbers.formatDecimal(report.s2.generalAverage,1,2)}"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Moyenne annuelle -->
+        <div class="card" style="margin-top:16px;background:linear-gradient(135deg,var(--indigo-50),#fff)">
+            <div class="card-body" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px;flex-wrap:wrap">
+                <div style="font-size:13px;font-weight:600;color:var(--text-2)">Moyenne annuelle</div>
+                <div style="background:var(--primary);color:#fff;padding:8px 22px;border-radius:10px;font-family:'DM Mono',monospace;font-size:20px;font-weight:700;box-shadow:0 4px 12px rgba(99,102,241,.30)"
+                     th:text="${report.annualAverage == null ? '—' : #numbers.formatDecimal(report.annualAverage,1,2)}"></div>
+            </div>
+        </div>
+
+    </section>
+</div>
+</body>
+</html>

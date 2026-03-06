@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Évaluation')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: shell('Évaluation', ~{::section})}">
+    <section>
+        <div class="card">
+            <div class="card-header">
+                <div style="font-weight:800" th:text="${evaluation.id == null ? 'Nouvelle évaluation' : 'Modifier évaluation'}"></div>
+                <a class="btn" data-tooltip="Retour" th:href="@{/evaluations}"><span class="material-symbols-outlined mi-sm">arrow_back</span> Retour</a>
+            </div>
+            <div class="card-body">
+
+                <form class="form" th:action="${evaluation.id == null} ? @{/evaluations} : @{/evaluations/{id}(id=${evaluation.id})}" method="post" th:object="${evaluation}">
+                    <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                        <div th:each="e : ${#fields.errors('*')}" th:text="${e}"></div>
+                    </div>
+
+                    <div class="field">
+                        <label>Affectation</label>
+                        <select name="assignmentId" required>
+                            <option value="" disabled th:selected="${selectedAssignmentId == null}">Sélectionner</option>
+                            <option th:each="a : ${assignments}" th:value="${a.id}"
+                                    th:selected="${(selectedAssignmentId != null ? selectedAssignmentId : (evaluation.assignment != null ? evaluation.assignment.id : null)) == a.id}"
+                                    th:text="${a.classGroup.name + ' • ' + a.subject.code + ' • ' + a.semester + ' • ' + a.academicYear}"></option>
+                        </select>
+                        <div style="color:var(--muted); font-size:12px; margin-top:6px">
+                            * L'année et le semestre doivent correspondre à l'affectation (sinon erreur).
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="field">
+                            <label>Titre</label>
+                            <input class="input" type="text" th:field="*{title}" />
+                        </div>
+                        <div class="field">
+                            <label>Date</label>
+                            <input type="date" th:field="*{date}" />
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="field">
+                            <label>Poids (%)</label>
+                            <input type="number" step="0.1" min="0" max="100" th:field="*{weight}" />
+                        </div>
+                        <div class="field">
+                            <label>Note max</label>
+                            <input type="number" step="0.1" min="0" th:field="*{maxScore}" />
+                        </div>
+                        <div class="field">
+                            <label>Année académique (optionnel)</label>
+                            <input class="input" type="text" th:field="*{academicYear}" placeholder="vide = copie depuis l'affectation" />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Semestre (optionnel)</label>
+                        <select th:field="*{semester}">
+                            <option value="" th:selected="${evaluation.semester == null}">vide = copie depuis l'affectation</option>
+                            <option th:each="sem : ${semesters}" th:value="${sem}" th:text="${sem}"></option>
+                        </select>
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn btn-primary" type="submit">Enregistrer</button>
+                        <a class="btn" th:href="@{/evaluations}">Annuler</a>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

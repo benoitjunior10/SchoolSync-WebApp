@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Professeurs')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: shell('Professeurs', ~{::section})}">
+    <section>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">Liste des professeurs</div>
+                    <div class="card-subtitle">
+                        <span data-search-count="teachers-table"
+                              th:attr="data-total=${#lists.size(teachers) + ' professeur' + (#lists.size(teachers) > 1 ? 's' : '')}"
+                              th:text="${#lists.size(teachers) + ' professeur' + (#lists.size(teachers) > 1 ? 's' : '')}"></span>
+                    </div>
+                </div>
+                <a class="btn btn-primary" th:href="@{/teachers/new}">
+                    <span class="material-symbols-outlined mi-sm">add</span> Nouveau professeur
+                </a>
+            </div>
+            <div class="search-bar">
+                <div class="search-wrap">
+                    <span class="material-symbols-outlined" style="font-size:18px;">search</span>
+                    <input class="search-input" type="text" data-search="teachers-table" placeholder="Rechercher par nom, matricule, email…" />
+                </div>
+                <div class="per-page-wrap">Par page :
+                    <select data-per-page="teachers-table">
+                        <option value="10" selected>10</option><option value="25">25</option><option value="50">50</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-body" style="padding:0">
+                <div class="table-wrap" style="border:none;border-radius:0;box-shadow:none">
+                    <table class="table table-mobile" id="teachers-table" data-paginate="10">
+                        <thead>
+                        <tr><th>Matricule</th><th>Nom complet</th><th>Email</th><th>Téléphone</th><th></th></tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="t : ${teachers}">
+                            <td data-label="Matricule"><span class="mono" style="font-size:12px;background:var(--surface-2);border:1px solid var(--border);padding:2px 8px;border-radius:6px" th:text="${t.matricule}"></span></td>
+                            <td data-label="Nom" style="font-weight:500" th:text="${t.firstName + ' ' + t.lastName}"></td>
+                            <td data-label="Email" class="muted" th:text="${t.email}"></td>
+                            <td data-label="Tél." class="muted" th:text="${t.phone}"></td>
+                            <td>
+                                <div class="actions">
+                                    <a class="btn btn-icon" data-tooltip="Modifier" th:href="@{/teachers/{id}/edit(id=${t.id})}"><span class="material-symbols-outlined">edit</span></a>
+                                    <form th:action="@{/teachers/{id}/delete(id=${t.id})}" method="post" style="margin:0">
+                                        <button class="btn btn-icon btn-danger" type="submit" data-confirm="Supprimer ce professeur ?" data-tooltip="Supprimer"><span class="material-symbols-outlined">delete</span></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-empty>
+                            <td colspan="5" style="text-align:center;padding:32px;color:var(--muted)">
+                                <span class="material-symbols-outlined" style="font-size:32px;opacity:.25;display:block;margin-bottom:8px">search</span>
+                                Aucun résultat.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="pagination" data-pagination="teachers-table">
+                <div class="pagination-info"></div>
+                <div class="pagination-controls"></div>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

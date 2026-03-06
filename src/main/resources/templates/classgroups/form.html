@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Classe')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: shell('Classe', ~{::section})}">
+    <section>
+        <div class="card">
+            <div class="card-header">
+                <div style="font-weight:800" th:text="${classGroup.id == null ? 'Nouvelle classe' : 'Modifier classe'}"></div>
+                <a class="btn" data-tooltip="Retour" th:href="@{/class-groups}"><span class="material-symbols-outlined mi-sm">arrow_back</span> Retour</a>
+            </div>
+            <div class="card-body">
+
+                <form class="form" th:action="${classGroup.id == null} ? @{/class-groups} : @{/class-groups/{id}(id=${classGroup.id})}" method="post" th:object="${classGroup}">
+                    <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                        <div th:each="e : ${#fields.errors('*')}" th:text="${e}"></div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="field">
+                            <label>Nom</label>
+                            <input class="input" type="text" th:field="*{name}" />
+                        </div>
+                        <div class="field">
+                            <label>Niveau</label>
+                            <input class="input" type="text" th:field="*{level}" />
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="field">
+                            <label>Programme</label>
+                            <input class="input" type="text" th:field="*{program}" />
+                        </div>
+                        <div class="field">
+                            <label>Année académique</label>
+                            <input class="input" type="text" th:field="*{academicYear}" placeholder="ex: 2025-2026" />
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn btn-primary" type="submit">Enregistrer</button>
+                        <a class="btn" th:href="@{/class-groups}">Annuler</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>
